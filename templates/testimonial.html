@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width = device-width, initial-scale = 1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ"
+        crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.1/js/tether.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <title>Handy Cart: Online Subscription based shopping for groceries and other items</title>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#carousel').carousel({
+                pause: true,
+                interval: 10000,
+            });
+        });
+    </script>
+</head>
+<body class="home-page" style="background-image: url(images/overlay2.png), url(images/overlay4.svg), linear-gradient(45deg, #f7f7f9 28%, teal 95%) !important;">
+    <!-- Nav bar starts-->
+    <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>              <a class="navbar-brand" href="">
+                    <img src="{{url_for('static', filename='img/another.png')}}" style="width:50%; height:40%;">
+                  </a>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+            <ul class="navbar-nav">
+                <li class="nav-item "> <a class="nav-link" href="{{url_for('login')}}">Login </a> </li>
+                <li class="nav-item "> <a class="nav-link" href="{{url_for('register', is_seller='1')}}" active>Become a Supplier </a> </li>
+            </ul>
+        </div>
+    </nav>
+    <!-- Nav bar ends-->
+    <!-- Content starts -->
+    <div class="container">
+         <div class="row ">
+                <div class="col_4 text-center"><img src="{{url_for('static', filename='img/mascot_right.gif')}}" alt="Slurpy" ></div>
+                <div class="col_8" style="color:black;"><blockquote>Thank you for choosing to shop with Handycart! Be assured that you are in the right place for fresh grocery that will be dropped off at your doorstep. We offer the most reasonable prices on all our products and allow you to choose from a variety of brands and suppliers. We realize you have busy and demanding lives, so we’ve made grocery shopping easy for you. If you’ve never shopped with us before, we invite you to come and experience grocery shopping like never before. We would love to have you as part of the Handycart family
+                </blockquote>
+              <a id="check-out" class="badge badge-info"  title="Click to know more" style="cursor: pointer;" href="{{url_for('get_mockup_products', category_id='3')}}">Check our products!</a></div>
+            </div>
+    </div>
+    <!-- login ends -->
+    <!-- <h3 class="text-center"> See what our patrons have to say </h3> -->
+    <!-- testimonials start -->
+    <div id="carousel" class="carousel slide testimonial-slider text-center" data-ride="carousel">
+        <ol class="carousel-indicators">
+            <li data-target="#carousel" data-slide-to="0" class="active"></li>
+            <li data-target="#carousel" data-slide-to="1"></li>
+            <li data-target="#carousel" data-slide-to="2"></li>
+        </ol>
+        <div class="carousel-inner" role="listbox">
+            <div class="carousel-item active">
+                <div class="col-md-12 pt-2 pb-2">
+                    <img src="{{url_for('static', filename='img/avatar-1.jpg')}}" class="img-circle " />
+                    <div>
+                        <p>
+                            <blockquote>
+                                <h3>
+                                  <i>One</i>
+                                </h3> of the best web applications right now!
+                                <br>
+                                <small><strong>Vulputate M., Dolor</strong></small>
+                            </blockquote>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="col-md-12 pt-2 pb-2">
+                    <img src="{{url_for('static', filename='img/avatar-2.jpg')}}" class="img-circle" />
+                    <div>
+                        <p>
+                            <blockquote>
+                                <h3><i>This</i></h3> is better than Amazon Dash!<br>
+                                <small><strong>Alice</strong></small>
+                            </blockquote>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="col-md-12 pt-2 pb-2">
+                    <img src="{{url_for('static', filename='img/avatar-3.jpg')}}" class="img-circle" />
+                    <div>
+                        <p>
+                            <blockquote>
+                                <h3><i>I</i></h3> Love it !!! <br>
+                                <small><strong>George</strong></small>
+                            </blockquote>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <footer class="footer">
+    <br/>
+    <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse" style="position:fixed; bottom:0; width:100%; height:3em;">
+
+        <div class="navbar-collapse">
+          <ul class="navbar-nav">
+            <li class="nav-item" style="float:left;">
+              <a class="nav-link" href="">&copy; Handy Cart</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+          <ul class="navbar-nav">
+            <li class="nav-item" style="float:right;">
+              <a class="nav-link" href="{{url_for('about_us')}}">About Us</a>
+            </li>
+            <li class="nav-item" style="float:right;">
+              <a class="nav-link" href="{{url_for('contact_us')}}">Contact Us</a>
+            </li>
+          </ul>
+        </div>
+    </nav>
+    </footer>
+</body>
+
+</html>

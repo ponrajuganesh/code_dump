@@ -1,0 +1,27 @@
+{% extends "seller-layout.html" %}
+{% block body %}
+<title> Seller Statistics </title>
+<input type="hidden" id="products_string" value="{{products_string}}">
+<input type="hidden" id="sold_count_string" value="{{counts_string}}">
+
+<script src="{{ url_for('static', filename='d3.js') }}"></script>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='c3.css') }}">
+<script src="{{ url_for('static', filename='c3.js') }}"></script>
+<script src="{{ url_for('static', filename='stats.js') }}"></script>
+
+<script type="text/javascript">
+  $( document ).ready(function() {
+    $("#footer").removeAttr("style");
+
+    $("#footer").attr("style", "bottom:0; margin:0; position:fixed; width:100%; background-color: #7B4E4E;")
+  });
+</script>
+
+<div>
+  <h1 align="center"> Statistics </h1>
+</div>
+<div class="container-fluid col_12">
+  <div id="chart">
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% if is_seller %}
+  {% extends "seller-layout.html" %}
+{% else %}
+  {% extends "customer-layout.html" %}
+{% endif %}
+
+{% block body %}
+<title> Product Search </title>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col_3">
+      <div class="list-group">
+        {% for category in categories %}
+          <a id="{{category.id}}" href="{{url_for('get_products', category_id=category.id)}}" class="list-group-item list-group-item-action categories">{{category.name}}</a>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="col_9">
+      <div class="container-fluid">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item active">{{category_name}}</li>
+        </ol>
+        <div class="row">
+          {% for product in products %}
+              <div class="col_4">
+                {% if is_seller %}
+                  <a href="{{url_for('set_product_properties', product_id=product.id, category_id=category_id, category_name=category_name)}}"><img src="{{url_for('static', filename='img/%s' % product.img_src)}}" class="img-thumbnail" alt="Responsive image"></a>
+                {% else %}
+                  <a href="{{url_for('subscribe_product', product_id=product.id, category_id=category_id, category_name=category_name)}}"><img src="{{url_for('static', filename='img/%s' % product.img_src)}}" class="img-thumbnail" alt="Responsive image"></a>
+                {% endif %}
+                <p align="center"> {{product.name}} </p>
+              </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "customer-layout.html" %}
+{% block body %}
+<title> Orders </title>
+<div class="container-fluid">
+  <div>
+    <h1 align="center"> Future Orders </h1>
+  </div>
+  <div class="container-fluid" style="width:90%; margin: 0 auto;">
+    <div>
+      {% for month_date in sorted_month_dates %}
+        <h3> {{month_date}} </h3>
+        <div class="row">
+          {% for order in data[month_date] %}
+            <div class="col-48 box-shadow" style="margin-top: 10px;">
+
+              <div class="col_6">
+                <img src="{{url_for('static', filename='img/%s' % order.img_src)}}" alt="Product Image" class="img-thumbnail">
+              </div>
+
+              <div class="col_6">
+                <div class="row">
+                  <dt class="col-sm-6">Product</dt>
+                  <dd class="col-sm-6">{{order.product_name}}</dd>
+                  <dt class="col-sm-6">Qty</dt>
+                  <dd class="col-sm-6">{{order.quantity}}</dd>
+                  <dt class="col-sm-6">Seller</dt>
+                  <dd class="col-sm-6">{{order.seller_name}}</dd>
+                </div>
+                <br/>
+              </div>
+
+            </div>
+            {% if (loop.index%2) != 0 %}
+              <div class="col-22"></div>
+            {% endif %}
+          {% endfor %}
+
+        </div>
+        <br/>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends "customer-layout.html" %}
+{% block body %}
+<title> Subscribe </title>
+<div class="container-fluid">
+  <div id="mascot_block" class="row" style="display:none;">
+    <div class="col_4"></div>
+    <div class="col_6">
+      <wordwrap>
+        <div class="alert alert-success" role="alert" id="mascot_message">
+          {{product.name}}
+        </div>
+      </wordwrap>
+    </div>
+    <img class="text-right col_1" src="{{url_for('static', filename='img/potato.jpg')}}" style="height: 100px; width: 100px; float: right; border-radius: 25px;">
+  </div>
+  <div class="row">
+    <div class="col_3" id="subscribe-list-group">
+      <div class="list-group">
+        {% for category in categories %}
+          <a id="{{category.id}}" href="{{url_for('get_products', category_id=category.id, is_seller=is_seller)}}" class="list-group-item list-group-item-action categories">{{category.name}}</a>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="col_9">
+      <div class="container-fluid">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{{url_for('get_products', category_id=category_id)}}">{{category_name}}</a></li>
+          <li class="breadcrumb-item active">{{product.name}}</li>
+        </ol>
+
+        <!-- Actual subscription options -->
+        <div class="row">
+
+          <!-- Large Image of the Product -->
+          <div class="col_4">
+            <div class="card">
+              <img class="card-img-top img-fluid" src="{{url_for('static', filename='img/%s' % product.img_src)}}" alt="Card image cap">
+            </div>
+          </div>
+          <div class="col_8">
+            <dl class="row">
+              <dt class="col-sm-3">Qty</dt>
+              <dd class="col-sm-9">
+                <div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" id="product_quantity_text" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{selected_quantity}}
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    {% for quantity in quantities %}
+                      <a class="dropdown-item" href="{{url_for('subscribe_product', product_id=product.id, category_id=category_id, category_name=category_name, quantity='%s' % quantity.quantity)}}">{{quantity.quantity}} {{units_name}}</a>
+                    {% endfor %}
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{url_for('subscribe_product', product_id=product.id, category_id=category_id, category_name=category_name, quantity='ALL')}}">ALL</a>
+                  </div>
+                </div>
+              </dd>
+
+              <dt class="col-sm-3">Frequency</dt>
+              <dd class="col-sm-9">
+                <div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" id="product_frequency" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Frequency
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="#" id="0">Weekly</a>
+                    <a class="dropdown-item" href="#" id="1">Bi Weekly</a>
+                    <a class="dropdown-item" href="#" id="2">Monthly</a>
+                  </div>
+                </div>
+              </dd>
+
+              <dt class="col-sm-3">Days</dt>
+              <dd class="col-sm-9">
+                <div class="btn-group-sm" data-toggle="buttons" id="product_days">
+                  <label class="btn btn-primary">
+                    <input class="selected_dates" type="checkbox" autocomplete="off" id="0"> M
+                  </label>
+                  <label class="btn btn-primary">
+                    <input class="selected_dates" type="checkbox" autocomplete="off" id="1"> T
+                  </label>
+                  <label class="btn btn-primary">
+                    <input class="selected_dates" type="checkbox" autocomplete="off" id="2"> W
+                  </label>
+                  <label class="btn btn-primary">
+                    <input class="selected_dates" type="checkbox" autocomplete="off" id="3"> T
+                  </label>
+                  <label class="btn btn-primary">
+                    <input class="selected_dates" type="checkbox" autocomplete="off" id="4"> F
+                  </label>
+                  <label class="btn btn-primary">
+                    <input class="selected_dates" type="checkbox" autocomplete="off" id="5"> S
+                  </label>
+                  <label class="btn btn-primary">
+                    <input class="selected_dates" type="checkbox" autocomplete="off" id="6"> S
+                  </label>
+                </div>
+              </dd>
+            </dl>
+            </div>
+
+        </div> <!-- Actual subscription options ends -->
+        <div> <p> {{product.description}} </p> </div>
+        <div id="seller_table">
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Seller</th>
+                <th>Price</th>
+                <th>Qty</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for price_info in prices %}
+                <tr>
+                  <td scope="row">
+                    <div>
+                      <label><input type="radio" class="input_radio" name="selected_price" value="{{price_info.id}}"></label>
+                    </div>
+                  </td>
+                  <td> {{price_info.name}} </td>
+                  <td> {{price_info.cost}} </td>
+                  <td> {{price_info.quantity}} {{units_name}} </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <form action="{{url_for('add_subscription')}}" method="post">
+          <input type="hidden" id="price_id" name="price_id" value="" />
+          <input type="hidden" id="frequency" name="frequency" value="" />
+          <input type="hidden" id="days" name="days" value="" />
+
+          <div class="text-right">
+            <a class="btn btn-danger" href="{{url_for('get_products', category_id=category_id)}}" role="button">Cancel</a>
+            <button id="subscribe_button" type="submit" class="btn btn-primary">Subscribe</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "customer-layout.html" %}
+{% block body %}
+<title> Subscription List </title>
+
+<script type="text/javascript">
+$(document).ready(function() {
+	$(".delete-subscription").on('click', function() {
+		subscription_id = $(this).attr('id');
+
+		$.getJSON($SCRIPT_ROOT + '/delete_subscription', {
+			subscription_id: subscription_id,
+		}, function(data) {
+			$("." + subscription_id).attr("style", "display:none;");
+			$.notify({
+				message: "Subscription deleted succesfully!"
+			},{
+				type: 'danger'
+			});
+
+		});
+	});
+});
+</script>
+
+<div class="container-fluid">
+	<h1 align='center'> Subscriptions </h1>
+	<br/>
+	<div id="subscriptions">
+		<div class="container_fluid" style="width:90%; margin: 0 auto;">
+			<div class="row">
+      {% for subscription in subscriptions %}
+			<div class="col-48 {{subscription.id}} container" style="margin-top: 10px;">
+				<div> <h4> {{subscription.product_name}} <span class="badge badge-pill badge-danger delete-subscription" id="{{subscription.id}}" style="cursor:pointer;">Delete</span> </h4></div>
+				<hr>
+				<div class="row align-items-right box-shadow">
+					<div class="col_6">
+						<img class="img-fluid" src="{{url_for('static', filename='img/%s' % subscription.img_src)}}" alt="Card image cap">
+					</div>
+
+					<div class="col_6">
+						<dl class="row">
+							<dt class="col-sm-3">Seller</dt>
+							<dd class="col-sm-9">{{subscription.seller_name}}</dd>
+
+							<dt class="col-sm-3">Qty</dt>
+							<dd class="col-sm-9">{{subscription.quantity}} {{subscription.units}}</dd>
+
+							<dt class="col-sm-3">Cost</dt>
+							<dd class="col-sm-9">{{subscription.cost}}</dd>
+
+							<dt class="col-sm-3">Days</dt>
+							<dd class="col-sm-9">
+								<div class="btn-group-sm" data-toggle="buttons">
+									{% for day in subscription.days %}
+									<label class="btn btn-primary">
+										<input type="checkbox" autocomplete="off"> {{day}}
+									</label>
+									{% endfor %}
+								</div>
+							</dd>
+							<dt class="col-sm-3">Freq</dt>
+							<dd class="col-sm-9">{{subscription.frequency}}</dd>
+						</dl>
+					</div>
+				</div>
+			</div>
+
+			{% if (loop.index%2) != 0 %}
+				<div class="col-22"></div>
+			{% endif %}
+      {% endfor %}
+		</div>
+    </div>
+  </div>
+	<a href="javascript:" id="return-to-top"><i class="icon-chevron-up"></i></a>
+</div>
+{% endblock %}

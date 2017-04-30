@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.1/js/tether.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='customer.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='back-to-top.css') }}">
+  <script src="{{ url_for('static', filename='bootstrap-notify.js') }}"></script>
+  <script src="{{ url_for('static', filename='bootstrap-notify.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='product-search.js') }}"></script>
+  <script src="{{ url_for('static', filename='back-to-top.js') }}"></script>
+
+  <script type="text/javascript">
+    var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    $(function () {
+      $('[data-toggle="popover"]').popover({
+        html: true
+      })
+    });
+  </script>
+
+  <script src="{{ url_for('static', filename='profile.js') }}"></script>
+
+  {% if category_id %}
+    <script type="text/javascript">
+      $( document ).ready(function() {
+        $("#{{category_id}}").addClass("active");
+        console.log("hello")
+
+        $('html, body').animate({
+          scrollTop : $(".breadcrumb").offset().top - 10
+        }, 1000);
+      });
+    </script>
+  {% endif %}
+
+  <script type="text/javascript">
+    $( document ).ready(function() {
+
+
+      $('.dropdown-menu a').click(function(){
+        $('#product_frequency').text($(this).text());
+        $('#frequency').val($(this).attr("id"));
+      });
+
+      $('.input_radio').on('change', function() {
+         $('#price_id').val($('input[name=selected_price]:checked').val());
+      });
+
+      var days = []
+      $('#product_days').on('change', function() {
+        days = []
+        $('input[class=selected_dates]:checked').each(function() {
+            days.push($(this).attr("id"));
+        });
+
+        $('#days').val(days.join(","));
+      });
+
+      $('#subscribe_button').bind('click', function() {
+        var message;
+        if (! $('#frequency').val()) {
+          message = "Please select the frequency of delivery";
+        }
+        else if (! $('#price_id').val()) {
+          message = "Please select the seller";
+        }
+        else if (days.length == 0) {
+          message = "Please select the days to deliver";
+        }
+
+        if (message) {
+          $.notify({
+            message: message
+          },{
+            type: 'danger'
+          });
+          return false;
+        }
+
+        $.getJSON($SCRIPT_ROOT + '/add_subscription', {
+          frequency: $('#frequency').val(),
+          days: $("#days").val(),
+          price_id: $('#price_id').val()
+        }, function(data) {
+          $('#mascot_block').removeAttr("style");
+          var product_name = $('#mascot_message').text();
+          $('#mascot_message').text('');
+          $('#mascot_message').html(product_name + " succesfully subcribed. Check your <a href='{{url_for('get_subscriptions')}}'>Subscriptions</a>");
+        });
+        return false;
+      });
+    });
+  </script>
+</head>
+</script>
+
+<body>
+  <nav class="navbar navbar-toggleable-md navbar-inverse bg-light" style="background-color: #4A84A7;" id="customer_navbar">
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand" href="{{url_for('get_products', category_id='3')}}">
+        <img src="{{url_for('static', filename='img/another.png')}}" style="width:50%; height:40%;">
+      </a>
+
+      <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+        <ul class="navbar-nav">
+          <li class="mr-3">
+            <form>
+              <input class="form-control mr-sm-2 dropdown-toggle" type="text" value="" placeholder="Search" id="product_search">
+              <div class="dropdown show">
+                <div class="dropdown-menu" id="search-results" style="display:none;">
+                  {% for all_product in all_products %}
+                    <a class="dropdown-item" href="{{url_for('subscribe_product', product_id=all_product.product_id, category_id=all_product.category_id, category_name=all_product.category_name)}}" style="display:none;">{{all_product.product_name}}</a>
+                  {% endfor %}
+                </div>
+              </div>
+            </form>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{url_for('get_subscriptions')}}">Subscriptions</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{url_for('get_orders')}}">Orders</a>
+          </li>
+          <li class="nav-item" style="float:right;">
+            <a class="nav-link" href="{{url_for('get_profile')}}">My Profile</a>
+          </li>
+          <li class="nav-item" style="float:right;">
+            <a class="nav-link" href="{{url_for('logout')}}">Sign Out</a>
+          </li>
+        </ul>
+      </div>
+  </nav>
+<br/>
+
+
+<div class="dropdown-menu">
+  <h6 class="dropdown-header">Dropdown header</h6>
+  <a class="dropdown-item" href="#">Action</a>
+  <a class="dropdown-item" href="#">Another action</a>
+</div>
+{% block body %}{% endblock %}
+
+<br/>
+<br/>
+<footer class="footer">
+<br/>
+<nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse footer" style="background-color: #4A84A7 !important; position:fixed; bottom:0; width:100%; height:3em;">
+    <div class="navbar-collapse">
+      <ul class="navbar-nav">
+        <li class="nav-item" style="float:left;">
+          <a class="nav-link" href="{{url_for('get_products', category_id='3')}}">&copy; Handy Cart</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="{{url_for('about_us')}}">About Us</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{url_for('contact_us')}}">Contact Us</a>
+        </li>
+      </ul>
+    </div>
+</nav>
+</footer>
+</body>
+</html>

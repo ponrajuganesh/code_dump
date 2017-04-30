@@ -1,0 +1,112 @@
+{% extends "admin-layout.html" %}
+{% block body %}
+<title> Add Product </title>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+
+    $("#add_product").click(function () {
+      var message;
+      if (! $.trim($("#category_id").val()) || $("#category_id").val() == "Product Category" ) {
+        message = "Please select a Product Category";
+      }
+      else if (! $.trim($("#product_name").val())) {
+        message = "Please enter a Product Name";
+      }
+      else if (! $.trim($("#product_description").val())) {
+        message = "Enter Product description";
+      }
+      else if ((! $.trim($("#units_id").val())) || $("#units_id").val() == "Product Units" ) {
+        message = "Please select Product Units Type";
+      }
+
+      if (message) {
+        $.notify({
+          message: message
+        },{
+          type: 'danger'
+        });
+        return false;
+      }
+    });
+  });
+</script>
+<div>
+  <h1 align="center"> Add Product </h1>
+</div>
+<br/>
+{% if message %}
+<div id="profile_mascot_block" class="row">
+  <div class="col_4"></div>
+  <div class="col_6">
+    <wordwrap>
+      <div class="alert alert-success" role="alert" id="profile_mascot_message">
+        {{message}}
+      </div>
+    </wordwrap>
+  </div>
+  <img class="text-right col_1" src="{{url_for('static', filename='img/potato.jpg')}}" style="height: 100px; width: 100px; float: right; border-radius: 25px;">
+</div>
+{% endif %}
+
+<div class="container-fluid" style='margin: auto;'>
+  <div class="col_6" style="float: none !important; margin: 0 auto;">
+    <form action="upload" method="post" enctype="multipart/form-data">
+      <div class="form-group row">
+        <label for="example-text-input" class="col_4 col-form-label">Category</label>
+        <div class="col_8">
+          <select class="custom-select" id="category_id" name="category_id">
+            <option selected>Product Category</option>
+            {% for category in categories %}
+            <option value="{{category.id}}">{{category.name}}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="example-text-input" class="col_4 col-form-label">Category</label>
+        <div class="col_8">
+          <select class="custom-select" id="units_id" name="units_id">
+            <option selected>Product Units</option>
+            {% for unit_id, unit_name in units.iteritems() %}
+            <option value="{{unit_id}}">{{unit_name}}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="example-search-input" class="col_4 col-form-label">Name</label>
+        <div class="col_8">
+          <input class="form-control" type="text" value="" id="product_name" name="product_name" placeholder="Product Name">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="example-email-input" class="col_4 col-form-label">Description</label>
+        <div class="col_8">
+          <textarea class="form-control" id="product_description" name="product_description" rows="3"></textarea>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="example-url-input" class="col_4 col-form-label">Image</label>
+        <div class="col_8">
+          <label class="custom-file">
+            <input type="file" name='file' id="product_image" class="custom-file-input">
+            <span class="custom-file-control"></span>
+          </label>
+        </div>
+      </div>
+      <div class="text-right">
+        <button class="btn btn-primary" id="add_product" type="submit">Add Product</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<br>
+<br>
+<br>
+
+
+{% endblock %}

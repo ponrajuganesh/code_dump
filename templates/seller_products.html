@@ -1,0 +1,53 @@
+{% extends "seller-layout.html" %}
+{% block body %}
+<title> Seller Products </title>
+<div>
+  <h1 align="center" style="color:black;"> {{seller_name}} </h1>
+</div>
+<div class="container-fluid" style="color:white; margin: 0 auto; width: 90%;">
+  <div class="row">
+  {% for product in products %}
+  <div class="col-48 box-shadow container" style="margin-top: 10px;">
+    <h3> {{product.name}} </h3>
+    <hr>
+    <div class="row container">
+      <div class="col_6">
+        <img src="{{url_for('static', filename='img/%s' % product.img_src)}}" alt="Product Image" class="img-thumbnail">
+      </div>
+
+      <div class="col_6">
+        <div class="row">
+          <dt class="col-sm-3" style="color:black;">Qty Type</dt>
+          <dd class="col-sm-9">{{product.units_name}}</dd>
+        </div>
+        <br/>
+        <div class="row">
+          <dd class="col_6">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th style="color:black;">Qty</th>
+                  <th style="color:black;">Cost</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for price in product.prices %}
+                <tr>
+                  <td>{{price.quantity}}</td>
+                  <td>${{price.cost}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </dd>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% if (loop.index%2) != 0 %}
+    <div class="col-22"></div>
+  {% endif %}
+  {% endfor %}
+</div>
+</div>
+{% endblock %}
