@@ -1,3 +1,5 @@
+// function that let's the admin to
+// activate and De-activate the users
 $(document).ready(function() {
   var $BTN = $(".permissions-button");
   var $SEARCHBAR = $("#username");
@@ -7,6 +9,8 @@ $(document).ready(function() {
     var user_type;
     var is_active;
 
+    // prepare the permission data structure
+    // based on button click
     if ($(this).text().trim() == "De-activate") {
       $(this).parent().parent().addClass("disabled")
       $(this).removeClass("btn-danger").addClass("btn-success");
@@ -26,10 +30,9 @@ $(document).ready(function() {
       user_type = $(this).parent().parent().attr("value");
       is_active = 1;
     }
-    console.log("USER ID " + user_id);
-    console.log("USER TYPE " + user_type);
-    console.log("IS_ACTIVE " + is_active);
 
+    // calls the set_permissions function via AJAX
+    // to write the data parameters to the data base
     $.getJSON($SCRIPT_ROOT + '/set_permissions', {
       user_id: user_id,
       user_type: user_type,
@@ -40,6 +43,7 @@ $(document).ready(function() {
 
   });
 
+  // dynamically shows and hides the users
   $SEARCHBAR.keyup(function () {
     var search_query = $(this).val();
     if (search_query) {

@@ -1,3 +1,4 @@
+// function that lets to search the products
 $(document).ready(function() {
   var $PRODUCTSEARCHBAR = $("#product_search");
 

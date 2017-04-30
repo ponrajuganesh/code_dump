@@ -1,10 +1,8 @@
+// Statistics of seller products
 $(document).ready(function() {
 
   var products_string = $('#products_string').val().trim();
   var sold_count_string = $('#sold_count_string').val().trim();
-
-  console.log(products_string);
-  console.log(sold_count_string);
 
   var products = products_string.split(",");
   products.unshift('Products');

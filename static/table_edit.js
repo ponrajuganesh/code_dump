@@ -3,7 +3,6 @@ $(document).ready(function() {
   var $BTN = $('#export');
 
   // hide a row from the table
-
   $('#table-add').click(function () {
     var $clone = $TABLE.find('tr.hide').clone(true).removeClass('hide table-line');
     $clone.removeAttr("style");
@@ -95,6 +94,7 @@ $(document).ready(function() {
       return false;
     }
 
+    //
     $.getJSON($SCRIPT_ROOT + '/add_product_properties', {
       properties: JSON.stringify(data),
       product_id: $("#product_id").val()

@@ -1,3 +1,4 @@
+// Profile page update
 $(document).ready(function() {
 
   $("#update_profile").click(function () {
@@ -20,7 +21,6 @@ $(document).ready(function() {
       data['last_name'] = $("#last_name").val();
     }
 
-    console.log(JSON.stringify(data));
     $.getJSON($SCRIPT_ROOT + '/update_profile', {
       data: JSON.stringify(data),
     }, function(data) {

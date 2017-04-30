@@ -10,9 +10,8 @@ import json
 import datetime
 import calendar
 
-#configurations
-# DATABASE = 'data.db'
-DATABASE = 'full_data.db'
+# Configuration features
+DATABASE = 'data.db'
 DEBUG = True
 SECRET_KEY = 'isdesign1234'
 IMAGE_FOLDER = 'handycart/static/img/'
@@ -24,12 +23,14 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 app.config.from_envvar('HANDYCART_SETTINGS', silent=True)
 
+# Method gets next weekday
 def get_next_weekday(d, weekday):
     days_ahead = weekday - d.weekday()
     if days_ahead <= 0: # Target day already happened this week
         days_ahead += 7
     return d + datetime.timedelta(days_ahead)
 
+# Constants and helper Constantsß
 frequencies_counter = {
     0: 4,
     1: 2,
@@ -74,6 +75,8 @@ UNITS = {
 	2: 'Count',
 	3: 'lb'
 }
+
+# function to fetch database objectß
 def get_db():
 	"""Opens a new database connection if there is none yet for the
 	current application context.
@@ -84,7 +87,7 @@ def get_db():
 		top.sqlite_db.row_factory = sqlite3.Row
 	return top.sqlite_db
 
-
+# function to close database
 @app.teardown_appcontext
 def close_database(exception):
 	"""Closes the database again at the end of the request."""
@@ -92,12 +95,14 @@ def close_database(exception):
 	if hasattr(top, 'sqlite_db'):
 		top.sqlite_db.close()
 
+# helper function to query database
 def query_db(query, args=(), one=False):
 	"""Queries the database and returns a list of dictionaries."""
 	cur = get_db().execute(query, args)
 	rv = cur.fetchall()
 	return (rv[0] if rv else None) if one else rv
 
+# function that let user's in
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     # to re-direct correctly
@@ -136,10 +141,12 @@ def login():
 
 	return render_template('login.html', errors=errors)
 
+# about us function
 @app.route('/about_us')
 def about_us():
     return render_template('about-us.html')
 
+# function to check whether the user is already present
 def check_user_exists(username, is_seller):
 	table_name = ""
 
@@ -155,6 +162,7 @@ def check_user_exists(username, is_seller):
 	else:
 		return False
 
+# function that let's user to register
 @app.route('/register', methods=['GET', 'POST'])
 def register():
 	errors, error, is_seller = {}, False, False
@@ -203,6 +211,7 @@ def register():
 
 	return render_template('register.html', errors=errors)
 
+# function which would be called even before the request
 @app.before_request
 def before_request():
 	g.categories = None
@@ -210,14 +219,17 @@ def before_request():
 	g.categories = query_db('select * from category order by name')
 	g.products = query_db('select product.id as product_id, product.name as product_name, category.id as category_id, category.name as category_name from product, category where product.category_id = category.id order by product.name')
 
+# a generic 404 page
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('abort.html')
 
+# function to route to testimonial page for the first time
 @app.route('/')
 def index():
 	return render_template('testimonial.html')
 
+# function to get products
 @app.route('/products')
 def get_products():
 	if 'user_id' not in session:
@@ -228,6 +240,7 @@ def get_products():
 	categories = query_db("select * from category order by name")
 	return render_template('products.html', categories=categories, products=products, category_id=request.args.get('category_id'), category_name=selected_category['name'], is_seller=session['is_seller'], all_products=g.products)
 
+# function to get the mock up products
 @app.route('/get_mockup_products')
 def get_mockup_products():
 	selected_category = query_db("select name from category where id = ?", [request.args.get('category_id')], one=True)
@@ -235,6 +248,7 @@ def get_mockup_products():
 	categories = query_db("select * from category order by name")
 	return render_template('mockup_products.html', categories=categories, products=products, category_id=request.args.get('category_id'), category_name=selected_category['name'])
 
+# function to get user permissions
 @app.route('/get_permissions')
 def get_permissions():
 	customers = query_db("select * from user")
@@ -242,6 +256,7 @@ def get_permissions():
 
 	return render_template("permissions.html", customers=customers, sellers=sellers)
 
+# function to set permissions
 @app.route('/set_permissions')
 def set_permissions():
 	user_id, user_type, is_active = request.args.get('user_id'), request.args.get('user_type'), request.args.get('is_active')
@@ -252,6 +267,7 @@ def set_permissions():
 
 	return jsonify(insert='Done')
 
+# function that let's the user to subscribe
 @app.route('/subscribe')
 def subscribe_product():
 	if 'user_id' not in session:
@@ -272,6 +288,7 @@ def subscribe_product():
 	unit = query_db("select name from units where id = ?", [product['units_id']], one=True)
 	return render_template('subscribe.html', selected_quantity=quantity, quantities=quantities, product=product, prices=prices, units_name=unit['name'], category_id=request.args.get('category_id'), category_name=request.args.get('category_name'), categories=g.categories, all_products=g.products, title="Subscribe Product")
 
+# function that sets product cost and quantity
 @app.route('/set_product_properties')
 def set_product_properties():
 	product_id, category_id = request.args.get('product_id'), request.args.get('category_id')
@@ -279,19 +296,12 @@ def set_product_properties():
 	category_name = query_db("select name from category where id = ?", [category_id], one=True)
 	return render_template('set-product-properties.html', categories=g.categories, product=product, category_name=category_name['name'], category_id=category_id, units_name=UNITS[int(product['units_id'])], is_seller=session['is_seller'], all_products=g.products, title="Add Product properties")
 
-def upload_file(file_object):
-	# filename = secure_filename(file.filename)
-	filename = "another.jpg"
-	file_object.save(os.path.join(IMAGE_FOLDER, filename))
-
-
-
+# function that adds subscription to the database
 @app.route('/add_subscription')
 def add_subscription():
 	if 'user_id' not in session:
 		return render_template('abort.html', title="404 Something is wrong")
 
-	# frequency, days, price_id = request.form['frequency'], request.form['days'], request.form['price_id']
 	frequency, days, price_id = request.args.get('frequency'), request.args.get('days'), request.args.get('price_id')
 	db = get_db()
 	db.execute("insert into subscription (user_id, price_id, days, frequency) values (?, ?, ?, ?)", [session['user_id'], price_id, days, frequency])
@@ -299,6 +309,7 @@ def add_subscription():
 
 	return jsonify(result="Inserted")
 
+# function to delete subscription
 @app.route('/delete_subscription')
 def delete_subscription():
 	if 'user_id' not in session:
@@ -311,6 +322,7 @@ def delete_subscription():
 
 	return jsonify(result="Deleted")
 
+# function to return all the subscriptions
 @app.route('/get_subscriptions')
 def get_subscriptions():
 	if 'user_id' not in session:
@@ -362,6 +374,8 @@ def get_subscriptions():
 
 	return render_template('subscription_list.html', subscriptions=processed_subscriptions, all_products=g.products, title="All Subscriptions")
 
+# function that add product properties such as product_id
+# seller_id quantity cost
 @app.route('/add_product_properties')
 def add_product_properties():
 	if 'user_id' not in session:
@@ -377,6 +391,7 @@ def add_product_properties():
 
 	return jsonify(result="Working!")
 
+# function to fetch the user profile
 @app.route('/profile')
 def get_profile():
 	user = None
@@ -389,6 +404,7 @@ def get_profile():
 	address = query_db("select * from address where user_id = ?", [session['user_id']], one=True)
 	return render_template('profile.html', is_seller=session['is_seller'], user=user, address=address, all_products=g.products, title="Profile")
 
+# function that updates profile
 @app.route('/update_profile')
 def update_profile():
 	user_address_data = eval(request.args.get('data'))
@@ -412,6 +428,7 @@ def update_profile():
 
 	return jsonify(result="Inserted")
 
+# function that provides the products sold by seller
 @app.route('/get_seller_products')
 def get_seller_products():
 	seller = query_db("select * from seller where id = ?", [session['user_id']], one=True)
@@ -453,6 +470,7 @@ def get_seller_products():
 
 	return render_template('seller_products.html', products=customized_product_info, seller_name=seller['name'], all_products=g.products, title="Seller Products")
 
+# function that provides the seller statitics
 @app.route('/get_seller_stats')
 def get_seller_stats():
 	subscriptions = query_db("select product.name, count(*) as counts from price, subscription, product where price.product_id = product.id and  price.id = subscription.price_id and price.seller_id = ? group by price.product_id", [session['user_id']])
@@ -469,10 +487,12 @@ def get_seller_stats():
 
 	return render_template('seller_stats.html', products_string=products_string, counts_string=counts_string, all_products=g.products, title="Seller Stats")
 
+# function that returns the add product page
 @app.route('/add_product')
 def add_product():
 	return render_template('add_product.html', categories=g.categories, units=UNITS, title="Add Product")
 
+# function that uploads the file
 @app.route('/upload', methods=['POST'])
 def upload():
 	file = request.files['file']
@@ -489,6 +509,7 @@ def upload():
 
 		return render_template('add_product.html', categories=g.categories, title="Add Product", message="Product Added Successfully", units=UNITS)
 
+# function to get orders
 @app.route('/get_orders')
 def get_orders():
 	db = get_db()
@@ -534,14 +555,17 @@ def get_orders():
 			sorted_month_dates.append(month_date)
 	return render_template('orders.html', title="Orders", data=data, sorted_month_dates=sorted_month_dates)
 
+# function that returns the testimonial page
 @app.route('/testimonial')
 def testimonial():
     return render_template('testimonial.html')
 
+# function that returns the contact us page
 @app.route('/contact_us')
 def contact_us():
     return render_template('contact-us.html')
 
+# function that logs out the logged in user
 @app.route('/logout')
 def logout():
 	"""Logs the user out."""
